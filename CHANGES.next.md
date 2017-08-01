@@ -21,6 +21,9 @@ Enhancements:
 - Added support for P100 gpus on Google Cloud Platform (GH-1450)
 - Added gpu type to cuda_toolkit_8 metadata (GH-1453)
 - Added num_gpus to cuda_toolkit_8 metadata (GH-1455)
+- Cloud Spanner: Added --cloud_spanner_instance and --cloud_spanner_database to
+  separate instance lifecycle from perfkit resource lifecycle. This allows
+  reusing instances and databases for benchmark. (GH-1461)
 
 Bug fixes and maintenance updates:
 - Fixed provision phase of memcached_ycsb benchmark for non-managed memcached instances (GH-1384)
