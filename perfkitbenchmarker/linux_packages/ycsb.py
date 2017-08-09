@@ -527,7 +527,10 @@ class YCSBExecutor(object):
 
   def __init__(self, database, parameter_files=None, **kwargs):
     self.database = database
-    self.loaded = False
+    if FLAGS.ycsb_reload_database:
+      self.loaded = False
+    else:
+      self.loaded = True
     self.parameter_files = parameter_files or []
     self.parameters = kwargs.copy()
     # Self-defined parameters, pop them out of self.parameters, so they
