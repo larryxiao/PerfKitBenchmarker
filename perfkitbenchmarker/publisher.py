@@ -40,6 +40,7 @@ from perfkitbenchmarker import flag_util
 from perfkitbenchmarker import log_util
 from perfkitbenchmarker import version
 from perfkitbenchmarker import vm_util
+from perfkitbenchmarker.reporting import report
 
 FLAGS = flags.FLAGS
 
@@ -394,10 +395,16 @@ class PrettyPrintStreamPublisher(SamplePublisher):
                 if k not in all_constant_meta}
         result.write('  {0:<30s} {1:>15f} {2:<30s}'.format(
             sample['metric'], sample['value'], sample['unit']))
+        # TODO: benchmark agnostic way of defining result boundary, if there are any
+        # YCSB:
+        if 'overall RunTime' in sample['metric']:
+          report.flush_result()
+        report.add_sample(sample['metric'], str(sample['value']))
         if meta:
           result.write(' ({0})'.format(self._FormatMetadata(meta)))
         result.write('\n')
 
+    report.flush_result()
     global_meta = {k: v for k, v in samples[0]['metadata'].iteritems()
                    if k in globally_constant_keys}
     result.write('\n' + dashes + '\n')

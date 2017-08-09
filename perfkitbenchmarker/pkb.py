@@ -94,6 +94,7 @@ from perfkitbenchmarker import windows_benchmarks
 from perfkitbenchmarker.configs import benchmark_config_spec
 from perfkitbenchmarker.linux_benchmarks import cluster_boot_benchmark
 from perfkitbenchmarker.publisher import SampleCollector
+from perfkitbenchmarker.reporting import report
 
 LOG_FILE_NAME = 'pkb.log'
 COMPLETION_STATUS_FILE_NAME = 'completion_statuses.json'
@@ -673,7 +674,7 @@ def _LogCommandLineFlags():
     if flag.present:
       result.append(flag.serialize())
   logging.info('Flag values:\n%s', '\n'.join(result))
-
+  report.add_flags(FLAGS)
 
 def SetUpPKB():
   """Set globals and environment variables for PKB.
