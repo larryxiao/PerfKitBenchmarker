@@ -98,6 +98,9 @@ flags.DEFINE_boolean('ycsb_reload_database', True,
                      'Reload database, othewise skip load stage. '
                      'Note, this flag is only used if the database '
                      'is already loaded.')
+flags.DEFINE_boolean('ycsb_database_loaded', False,
+                     'If the database is already loaded. '
+                     'Do data load if not, skip data load if loaded.')
 flags.DEFINE_integer('ycsb_client_vms', 1, 'Number of YCSB client VMs.',
                      lower_bound=1)
 flags.DEFINE_list('ycsb_workload_files', ['workloada', 'workloadb'],
@@ -527,10 +530,7 @@ class YCSBExecutor(object):
 
   def __init__(self, database, parameter_files=None, **kwargs):
     self.database = database
-    if FLAGS.ycsb_reload_database:
-      self.loaded = False
-    else:
-      self.loaded = True
+    self.loaded = FLAGS.ycsb_database_loaded
     self.parameter_files = parameter_files or []
     self.parameters = kwargs.copy()
     # Self-defined parameters, pop them out of self.parameters, so they
