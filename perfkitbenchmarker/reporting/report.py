@@ -110,6 +110,8 @@ def create_sheet():
 
 def get_header():
     global header
+    if not FLAGS.reporting:
+      return
     range_ = 'Sheet1!1:1'
     value_render_option = 'FORMATTED_VALUE'
     date_time_render_option = 'FORMATTED_STRING'
@@ -117,11 +119,13 @@ def get_header():
     response = request.execute()
     if response.has_key('values'):
       header = response['values'][0]
-    pprint(header)
+    # pprint(header)
 
 def add_flags(FLAGS):
     global header
     global workloads
+    if not FLAGS.reporting:
+      return
     get_header()
     for name in FLAGS:
       flag = FLAGS[name]
@@ -137,17 +141,19 @@ def add_flags(FLAGS):
 # add_sample_dimension, adds a dimesion of the results
 def add_sample(key, value):
     global result
+    if not FLAGS.reporting:
+      return
     result[key] = value
     # update header
     if not key in header:
       header.append(key)
 
 def flush_result():
-    update_header()
-    if not FLAGS.reporting:
-      return
     global result
     global workloads
+    if not FLAGS.reporting:
+      return
+    update_header()
     if not len(result):
       return
     # split workloads
@@ -182,6 +188,8 @@ def flush_result():
     result = {}
 
 def update_header():
+    if not FLAGS.reporting:
+      return
     range_ = 'Sheet1!1:1'
     value_input_option = 'USER_ENTERED'
     value_range_body = {
