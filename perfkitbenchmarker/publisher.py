@@ -398,12 +398,13 @@ class PrettyPrintStreamPublisher(SamplePublisher):
         # TODO: benchmark agnostic way of defining result boundary, if there are any
         # YCSB:
         if 'overall RunTime' in sample['metric']:
-          report.flush_result()
+          report.add_result()
         report.add_sample(sample['metric'], str(sample['value']))
         if meta:
           result.write(' ({0})'.format(self._FormatMetadata(meta)))
         result.write('\n')
 
+    report.add_result()
     report.flush_result()
     global_meta = {k: v for k, v in samples[0]['metadata'].iteritems()
                    if k in globally_constant_keys}

@@ -96,6 +96,7 @@ import datetime
 header = ['datetime']
 flags_ = {'datetime' : str(datetime.datetime.now())}
 result = {}
+threads = []
 workloads = []
 
 def create_sheet():
@@ -124,6 +125,7 @@ def get_header():
 def add_flags(FLAGS):
     global header
     global workloads
+    global threads
     if not FLAGS.reporting:
       return
     get_header()
@@ -136,6 +138,7 @@ def add_flags(FLAGS):
           header.append(flag.name)
         flags_[flag.name] = flag.value
     workloads = flags_['ycsb_workload_files']
+    threads = flags_['ycsb_threads_per_client']
 
 # TODO: add_sample, adds benchmark results in a dict
 # add_sample_dimension, adds a dimesion of the results
@@ -148,20 +151,32 @@ def add_sample(key, value):
     if not key in header:
       header.append(key)
 
-def flush_result():
+import time
+value_range_body = {
+    'values' : [],
+}
+
+# ycsb runs workloads x threads
+workloads_i = 0
+threads_i = 0
+def add_result():
     global result
     global workloads
+    global threads
+    global workloads_i
+    global threads_i
+    global value_range_body
     if not FLAGS.reporting:
       return
-    update_header()
     if not len(result):
       return
     # split workloads
-    if not len(workloads):
-      flags_['ycsb_workload_files'] = 'error getting workload'
-    else:
-      flags_['ycsb_workload_files'] = workloads[0]
-      workloads = workloads[1:]
+    if threads_i == len(threads):
+      threads_i = 0
+      workloads_i += 1
+    flags_['ycsb_workload_files'] = workloads[workloads_i]
+    flags_['ycsb_threads_per_client'] = threads[threads_i]
+    threads_i += 1
     # build row
     row = []
     for k in header:
@@ -172,20 +187,19 @@ def flush_result():
       else:
         # manually added column
         row.append('')
-    # write row
+    value_range_body['values'].append(row)
+    result = {}
+
+def flush_result():
+    global value_range_body
+    update_header()
+    # write result rows
     range_ = 'Sheet1'
     value_input_option = 'USER_ENTERED'
     insert_data_option = 'INSERT_ROWS'
-    value_range_body = {
-        'values' : [
-          row
-        ],
-    }
-
     request = service.spreadsheets().values().append(spreadsheetId=FLAGS.reporting_sheet_id, range=range_, valueInputOption=value_input_option, insertDataOption=insert_data_option, body=value_range_body)
     response = request.execute()
     pprint(response)
-    result = {}
 
 def update_header():
     if not FLAGS.reporting:
