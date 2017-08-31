@@ -110,7 +110,7 @@ flags.DEFINE_list('ycsb_load_parameters', [],
                   'Passed to YCSB during the load stage. Comma-separated list '
                   'of "key=value" pairs.')
 flags.DEFINE_list('ycsb_run_parameters', [],
-                  'Passed to YCSB during the load stage. Comma-separated list '
+                  'Passed to YCSB during the run stage. Comma-separated list '
                   'of "key=value" pairs.')
 flags.DEFINE_list('ycsb_threads_per_client', ['32'], 'Number of threads per '
                   'loader during the benchmark run. Specify a list to vary the '

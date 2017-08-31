@@ -174,7 +174,10 @@ def add_result():
     if threads_i == len(threads):
       threads_i = 0
       workloads_i += 1
-    flags_['ycsb_workload_files'] = workloads[workloads_i]
+    workload = "dummy workload, need manual adjustment"
+    if workloads_i < len(workloads):
+      workload = workloads[workloads_i]
+    flags_['ycsb_workload_files'] = workload
     flags_['ycsb_threads_per_client'] = threads[threads_i]
     threads_i += 1
     # build row
